@@ -1,12 +1,9 @@
 
 
-
-
-generate TS config
-```sh
-yarn run tsc --init
+```shell
+yarn install
+yarn run ts:w
 ```
-
 
 
 
