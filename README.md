@@ -39,7 +39,7 @@ Degrees of Lewdity VERSION.html.zipBase64
 // 嵌入了i18n-cn.json的Base64编码后的zip文件后的html文件，直接以原始项目的html同样的方式打开即可使用
 Degrees of Lewdity VERSION.html.new.html
 ```
-9. 打开`Degrees of Lewdity VERSION.html.new.html`文件，play happy
+9. 打开`Degrees of Lewdity VERSION.html.new.html`文件， play
 
 ---
 
@@ -47,8 +47,8 @@ Degrees of Lewdity VERSION.html.new.html
 
 当前的加载实现是，先尝试加载内嵌的i18n-cn.json数据，再尝试通过fetch加载远程的i18n-cn.json数据，故：
 
-1. 直接打开（使用file://协议打开）`Degrees of Lewdity VERSION.html.new.html`文件，会读取嵌入在文件内的i18n-cn.json数据
-2. 使用任意一个web服务器访问 `Degrees of Lewdity VERSION.html.new.html` 文件，会先读取嵌入在文件内的i18n-cn.json数据，再通过fetch加载远程服务器上同目录下i18n-cn.json数据，并替换以及加载的内嵌i18n-cn.json数据
+1. 直接打开（使用file://协议打开）`Degrees of Lewdity VERSION.html.new.html`文件，会读取嵌入在文件内的i18n-cn.json数据，（因为file://协议无法使用fetch加载远程内容），加载结束
+2. 使用任意一个web服务器访问 `Degrees of Lewdity VERSION.html.new.html` 文件，会先读取嵌入在文件内的i18n-cn.json数据，再通过fetch加载远程服务器上同目录下i18n-cn.json数据，并替换已经加载的内嵌i18n-cn.json数据，加载结束
 
 
 ---
