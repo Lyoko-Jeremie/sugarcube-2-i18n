@@ -15,6 +15,7 @@ class I18NManager {
     }
 
     private initInerState() {
+        console.log('I18NManager initInerState()');
         // load data to fill TypeB
         this.typeB = new TypeB(this.cacheTypeBOutputText, this.cacheTypeBInputStoryScript);
         // TODO load data to fill TypeA
@@ -130,6 +131,7 @@ class I18NManager {
             console.error(E);
             return false;
         }).then((R) => {
+            this.initInerState();
             this.isInited_resolve(R);
             return R;
         });
@@ -139,9 +141,9 @@ class I18NManager {
         return fetch(this.translateDataRemotePath, {})
             .then(T => T.json())
             .then(T => {
-                console.log('loadTranslateData() T', T);
+                console.log('loadTranslateDataFromRemote() T', T);
                 if (this.checkAndProcessData(T)) {
-                    console.log('loadTranslateData() this', this);
+                    console.log('loadTranslateDataFromRemote() this', this);
                     return true;
                 }
                 return false;
@@ -149,7 +151,6 @@ class I18NManager {
                 console.error(E);
                 return false;
             }).then(R => {
-                this.initInerState();
                 return R;
             });
     }
@@ -193,12 +194,13 @@ class I18NManager {
     }
 
     translateDataValueZipPath = 'i18nCnZip';
+    translateDataValueZipPathFilePath = 'i18nCnObj.json';
 
     private loadTranslateDataFromValueZip(): Promise<boolean> {
         if ((window as any)[this.translateDataValueZipPath]) {
             console.log('loadTranslateDataFromValueZip() DataValueZip', [(window as any)[this.translateDataValueZipPath]]);
             return JSZip.loadAsync((window as any)[this.translateDataValueZipPath], {base64: true}).then(zip => {
-                const i18nCnObjZip = zip.file('i18nCnObj');
+                const i18nCnObjZip = zip.file(this.translateDataValueZipPathFilePath);
                 if (i18nCnObjZip) {
                     return i18nCnObjZip.async('string').then(i18nCnObjString => {
                         console.log('loadTranslateDataFromValueZip() i18nCnObjString', [i18nCnObjString]);
