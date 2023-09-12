@@ -150,17 +150,18 @@ class TypeB {
             // empty string
             return text;
         }
-        console.log('replaceOutputText input text', [text], text);
+        console.log('replaceOutputText input text ==>>', [text], text);
         const nNotTrim = this.outputTextMatchBuffer.bufTable.notTrim.get(text);
         if (nNotTrim) {
-            console.log('replaceOutputText notTrim', nNotTrim.to);
+            console.log('replaceOutputText notTrim ==>>', [text], ' replace to ==>>', nNotTrim.to, ' by ', nNotTrim, ' on key ', [text]);
             return nNotTrim.to;
         }
         const nTrim = this.outputTextMatchBuffer.bufTable.trim.get(MatchBuffer.trim(text));
         if (nTrim) {
-            console.log('replaceOutputText nTrim', nTrim.to);
+            console.log('replaceOutputText nTrim ==>>', [text], ' replace to ==>>', nTrim.to, ' by ', nTrim, ' on key ', [MatchBuffer.trim(text)]);
             return nTrim.to;
         }
+        console.log('replaceOutputText cannot find replace for input text ==>>', [text]);
         return text;
     }
 
@@ -174,12 +175,12 @@ class TypeB {
         let NNN: TypeBInputStoryScript | undefined;
         NNN = this.inputStoryMatchBuffer.bufTable.notTrim_NotTrimTag.get(s);
         if (NNN) {
-            console.log('replaceInputStoryScript notTrim_NotTrimTag', [NNN.to]);
+            // console.log('replaceInputStoryScript notTrim_NotTrimTag', [NNN.to]);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
                 if (NNN.debugMsg) {
                     console.log('replaceInputStoryScript debugMsg ==>>', NNN.debugMsg);
                 }
-                console.log('replaceInputStoryScript notTrim_NotTrimTag', [NNN.to]);
+                console.log('replaceInputStoryScript notTrim_NotTrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
                 return NNN.to;
             }
             console.log('replaceInputStoryScript notTrim_NotTrimTag filtered', NNN);
@@ -188,12 +189,12 @@ class TypeB {
         s = MatchBuffer.trimTag(s);
         NNN = this.inputStoryMatchBuffer.bufTable.notTrim_TrimTag.get(s);
         if (NNN) {
-            console.log('replaceInputStoryScript notTrim_TrimTag', [NNN.to]);
+            // console.log('replaceInputStoryScript notTrim_TrimTag', [NNN.to]);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
                 if (NNN.debugMsg) {
                     console.log('replaceInputStoryScript debugMsg ==>>', NNN.debugMsg);
                 }
-                console.log('replaceInputStoryScript notTrim_TrimTag', [NNN.to]);
+                console.log('replaceInputStoryScript notTrim_TrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
                 return NNN.to;
             }
             console.log('replaceInputStoryScript notTrim_TrimTag filtered', NNN);
@@ -202,12 +203,12 @@ class TypeB {
         s = MatchBuffer.trim(text);
         NNN = this.inputStoryMatchBuffer.bufTable.trim_NotTrimTag.get(s);
         if (NNN) {
-            console.log('replaceInputStoryScript trim_NotTrimTag', [NNN.to]);
+            // console.log('replaceInputStoryScript trim_NotTrimTag', [NNN.to]);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
                 if (NNN.debugMsg) {
                     console.log('replaceInputStoryScript debugMsg ==>>', NNN.debugMsg);
                 }
-                console.log('replaceInputStoryScript trim_NotTrimTag', [NNN.to]);
+                console.log('replaceInputStoryScript trim_NotTrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
                 return NNN.to;
             }
             console.log('replaceInputStoryScript trim_NotTrimTag filtered', NNN);
@@ -216,17 +217,18 @@ class TypeB {
         s = MatchBuffer.trimTag(s);
         NNN = this.inputStoryMatchBuffer.bufTable.trim_TrimTag.get(s);
         if (NNN) {
-            console.log('replaceInputStoryScript trim_TrimTag', [NNN.to]);
+            // console.log('replaceInputStoryScript trim_TrimTag', [NNN.to]);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
                 if (NNN.debugMsg) {
                     console.log('replaceInputStoryScript debugMsg ==>>', NNN.debugMsg);
                 }
-                console.log('replaceInputStoryScript trim_TrimTag', [NNN.to]);
+                console.log('replaceInputStoryScript trim_TrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
                 return NNN.to;
             }
             console.log('replaceInputStoryScript trim_TrimTag filtered', NNN);
             // be filtered, fall through, to match next
         }
+        console.log('replaceInputStoryScript cannot find replace for input text ==>>', [text]);
         return text;
     }
 
