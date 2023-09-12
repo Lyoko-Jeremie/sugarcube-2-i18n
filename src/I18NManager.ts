@@ -1,3 +1,9 @@
+enum TranslateDataLoadType {
+    'Remote' = 'Remote',
+    'ValueObject' = 'ValueObject',
+    'ValueZip' = 'ValueZip',
+}
+
 class I18NManager {
     typeA!: TypeA;
     typeB!: TypeB;
@@ -87,39 +93,131 @@ class I18NManager {
         });
     }
 
-    translateDataPath = 'i18n-cn.json';
+    translateDataRemotePath = 'i18n-cn.json';
 
-    loadTranslateData(): Promise<boolean> {
-        return fetch('i18n-cn.json', {})
+    // use typescript `target:es6` to translate `async-await` code
+    /*async*/   // cannot use `async-await`, because parent project's babel cannot process it correctly
+    loadTranslateData(loadOrder: TranslateDataLoadType[]): Promise<boolean> {
+        // let R = false;
+        // for (let loadType of loadOrder) {
+        //     switch (loadType) {
+        //         case TranslateDataLoadType.Remote:
+        //             R = await this.loadTranslateDataFromRemote() || R;
+        //             break;
+        //         case TranslateDataLoadType.ValueObject:
+        //             R = await this.loadTranslateDataFromValueObject() || R;
+        //             break;
+        //         case TranslateDataLoadType.ValueZip:
+        //             R = await this.loadTranslateDataFromValueZip() || R;
+        //             break;
+        //     }
+        // }
+        // return R;
+        return loadOrder.reduce((P, loadType) => {
+                return P.then((R) => {
+                    switch (loadType) {
+                        case TranslateDataLoadType.Remote:
+                            return this.loadTranslateDataFromRemote() || R;
+                        case TranslateDataLoadType.ValueObject:
+                            return this.loadTranslateDataFromValueObject() || R;
+                        case TranslateDataLoadType.ValueZip:
+                            return this.loadTranslateDataFromValueZip() || R;
+                    }
+                });
+            },
+            Promise.resolve(false),
+        ).catch(E => {
+            console.error(E);
+            return false;
+        }).then((R) => {
+            this.isInited_resolve(R);
+            return R;
+        });
+    }
+
+    private loadTranslateDataFromRemote(): Promise<boolean> {
+        return fetch(this.translateDataRemotePath, {})
             .then(T => T.json())
             .then(T => {
                 console.log('loadTranslateData() T', T);
-                if (T && T.typeB && T.typeB.TypeBOutputText && T.typeB.TypeBInputStoryScript) {
-                    this.cacheTypeBOutputText = T.typeB.TypeBOutputText.map(T => {
-                        return Object.assign(T, {
-                            from: T.f,
-                            to: T.t,
-                        });
-                    });
-                    this.cacheTypeBInputStoryScript = T.typeB.TypeBInputStoryScript.map(T => {
-                        return Object.assign(T, {
-                            from: T.f,
-                            to: T.t,
-                        });
-                    });
+                if (this.checkAndProcessData(T)) {
                     console.log('loadTranslateData() this', this);
                     return true;
                 }
                 return false;
-            })
-            .catch(E => {
+            }).catch(E => {
                 console.error(E);
                 return false;
             }).then(R => {
                 this.initInerState();
-                this.isInited_resolve(R);
                 return R;
             });
+    }
+
+    private checkAndProcessData(T: any) {
+        if (T && T.typeB && T.typeB.TypeBOutputText && T.typeB.TypeBInputStoryScript) {
+            this.cacheTypeBOutputText = T.typeB.TypeBOutputText.map((T: any) => {
+                return Object.assign(T, {
+                    from: T.f,
+                    to: T.t,
+                });
+            });
+            this.cacheTypeBInputStoryScript = T.typeB.TypeBInputStoryScript.map((T: any) => {
+                return Object.assign(T, {
+                    from: T.f,
+                    to: T.t,
+                });
+            });
+
+            // DEBUG test only
+            this.cacheTypeBInputStoryScript = this.cacheTypeBInputStoryScript.concat(this.cacheTypeBOutputText);
+            this.cacheTypeBOutputText = this.cacheTypeBInputStoryScript;
+
+            return true;
+        }
+        return false;
+    }
+
+    translateDataValueObjectPath = 'i18nCnObj';
+
+    private loadTranslateDataFromValueObject(): Promise<boolean> {
+        if ((window as any)[this.translateDataValueObjectPath]) {
+            const T = (window as any)[this.translateDataValueObjectPath];
+            console.log('loadTranslateDataFromValueObject() T', T);
+            if (this.checkAndProcessData(T)) {
+                console.log('loadTranslateDataFromValueObject() this', this);
+                return Promise.resolve(true);
+            }
+        }
+        return Promise.resolve(false);
+    }
+
+    translateDataValueZipPath = 'i18nCnZip';
+
+    private loadTranslateDataFromValueZip(): Promise<boolean> {
+        if ((window as any)[this.translateDataValueZipPath]) {
+            console.log('loadTranslateDataFromValueZip() DataValueZip', [(window as any)[this.translateDataValueZipPath]]);
+            return JSZip.loadAsync((window as any)[this.translateDataValueZipPath], {base64: true}).then(zip => {
+                const i18nCnObjZip = zip.file('i18nCnObj');
+                if (i18nCnObjZip) {
+                    return i18nCnObjZip.async('string').then(i18nCnObjString => {
+                        console.log('loadTranslateDataFromValueZip() i18nCnObjString', [i18nCnObjString]);
+                        const T = JSON.parse(i18nCnObjString);
+                        console.log('loadTranslateDataFromValueZip() T', T);
+                        if (this.checkAndProcessData(T)) {
+                            console.log('loadTranslateDataFromValueObject() this', this);
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+                return false;
+            }).catch(E => {
+                console.error(E);
+                return false;
+            });
+        }
+        return Promise.resolve(false);
     }
 
     isInited = new Promise<boolean>((resolve, reject) => {

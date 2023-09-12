@@ -4,11 +4,13 @@
   "description": "TypescriptWebpackTemplateProject",
   "private": true,
   "scripts": {
-    "ts:w": "tsc -w"
+    "ts:w": "tsc -w -p ./src/tsconfig.json",
+    "ts:tool:w": "tsc -w -p ./tool/tsconfig.json"
   },
   "packageManager": "yarn@3.4.1",
   "dependencies": {
     "json5": "^2.2.3",
+    "jszip": "^3.10.1",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
