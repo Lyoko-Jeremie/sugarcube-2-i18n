@@ -45,7 +45,7 @@ Degrees of Lewdity VERSION.html.new.html
 
 注：
 
-当前的加载实现是，先尝试加载内嵌的i18n-cn.json数据，再尝试通过fetch加载远程的i18n-cn.json数据，故：
+当前的加载实现是，先尝试加载内嵌的i18n-cn.json数据，再尝试通过fetch加载远程的i18n-cn.json数据，故存在两种打开方式：
 
 1. 直接打开（使用file://协议打开）`Degrees of Lewdity VERSION.html.new.html`文件，会读取嵌入在文件内的i18n-cn.json数据，（因为file://协议无法使用fetch加载远程内容），加载结束
 2. 使用任意一个web服务器访问 `Degrees of Lewdity VERSION.html.new.html` 文件，会先读取嵌入在文件内的i18n-cn.json数据，再通过fetch加载远程服务器上同目录下i18n-cn.json数据，并替换已经加载的内嵌i18n-cn.json数据，加载结束
