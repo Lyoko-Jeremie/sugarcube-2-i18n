@@ -1,11 +1,15 @@
 class I18NManager {
-    typeA: TypeA;
-    typeB: TypeB;
+    typeA!: TypeA;
+    typeB!: TypeB;
 
     constructor() {
         console.log('I18NManager constructor');
-        // TODO load data to fill TypeB
+
         this.mookLoad();
+    }
+
+    private initInerState() {
+        // load data to fill TypeB
         this.typeB = new TypeB(this.cacheTypeBOutputText, this.cacheTypeBInputStoryScript);
         // TODO load data to fill TypeA
         this.typeA = new TypeA();
@@ -82,6 +86,49 @@ class I18NManager {
                 '巴士是这个小镇里最便捷的交通方式，可以通过巴士站快速移动到想要去的地方。 ',
         });
     }
+
+    translateDataPath = 'i18n-cn.json';
+
+    loadTranslateData(): Promise<boolean> {
+        return fetch('i18n-cn.json', {})
+            .then(T => T.json())
+            .then(T => {
+                console.log('loadTranslateData() T', T);
+                if (T && T.typeB && T.typeB.TypeBOutputText && T.typeB.TypeBInputStoryScript) {
+                    this.cacheTypeBOutputText = T.typeB.TypeBOutputText.map(T => {
+                        return Object.assign(T, {
+                            from: T.f,
+                            to: T.t,
+                        });
+                    });
+                    this.cacheTypeBInputStoryScript = T.typeB.TypeBInputStoryScript.map(T => {
+                        return Object.assign(T, {
+                            from: T.f,
+                            to: T.t,
+                        });
+                    });
+                    console.log('loadTranslateData() this', this);
+                    return true;
+                }
+                return false;
+            })
+            .catch(E => {
+                console.error(E);
+                return false;
+            }).then(R => {
+                this.initInerState();
+                this.isInited_resolve(R);
+                return R;
+            });
+    }
+
+    isInited = new Promise<boolean>((resolve, reject) => {
+        this.isInited_resolve = resolve;
+        this.isInited_reject = reject;
+    });
+
+    private isInited_resolve!: (v: boolean) => any;
+    private isInited_reject!: (r: any) => any;
 
 }
 

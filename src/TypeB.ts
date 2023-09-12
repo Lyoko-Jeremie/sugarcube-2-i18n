@@ -47,6 +47,7 @@ enum MatchBufferType {
     'notTrim_TrimTag' = 'notTrim_TrimTag',
     'trim_NotTrimTag' = 'trim_NotTrimTag',
     'notTrim_NotTrimTag' = 'notTrim_NotTrimTag',
+    'invalid' = 'invalid',
 };
 
 class MatchBuffer<T extends IMatchBufferWithTag> {
@@ -61,10 +62,13 @@ class MatchBuffer<T extends IMatchBufferWithTag> {
             [MatchBufferType.trim_NotTrimTag]: new Map<string, T>(),
             [MatchBufferType.notTrim_TrimTag]: new Map<string, T>(),
             [MatchBufferType.notTrim_NotTrimTag]: new Map<string, T>(),
+            [MatchBufferType.invalid]: new Map<string, T>(),
         };
         mt.forEach((v) => {
             const r = preprocessFunc(v);
-            this.bufTable[r[1]].set(r[0], v);
+            if (r[1] !== MatchBufferType.invalid) {
+                this.bufTable[r[1]].set(r[0], v);
+            }
         });
     }
 
@@ -88,6 +92,12 @@ class TypeB {
         public InputStoryScript: TypeBInputStoryScript[],
     ) {
         this.outputTextMatchBuffer = new MatchBuffer<TypeBOutputText>(OutputText, (t) => {
+            // console.log('TypeB constructor outputTextMatchBuffer', t);
+            if (!(t.from && t.to)) {
+                console.log('TypeB constructor outputTextMatchBuffer invalid', t);
+                // remove invalid
+                return ['', MatchBufferType.invalid];
+            }
             const tt = t.dontTrim ? MatchBufferType.notTrim : MatchBufferType.trim;
             if (t.dontPrepareTrim) {
                 return [t.from, tt];
@@ -96,6 +106,12 @@ class TypeB {
             return [MatchBuffer.trim(t.from), tt];
         });
         this.inputStoryMatchBuffer = new MatchBuffer<TypeBInputStoryScript>(InputStoryScript, (t) => {
+            // console.log('TypeB constructor inputStoryMatchBuffer', t);
+            if (!(t.from && t.to)) {
+                console.log('TypeB constructor inputStoryMatchBuffer invalid', t);
+                // remove invalid
+                return ['', MatchBufferType.invalid];
+            }
             const tt = t.dontTrim ? (
                 t.dontTrimTag ? MatchBufferType.notTrim_NotTrimTag : MatchBufferType.notTrim_TrimTag
             ) : (
