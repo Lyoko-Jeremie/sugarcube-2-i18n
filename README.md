@@ -21,7 +21,13 @@ node build.js -d -u -b 2
 5. 编译 degrees-of-lewdity 项目获得 Degrees of Lewdity VERSION.html 文件
 
 6. 在 Degrees of Lewdity VERSION.html 文件同路径（文件夹）下放置 i18n-cn.json 文件（翻译数据）
-7. 回到当前项目执行如下指令，使用 insertJson.js 将 i18n-cn.json 文件压缩成zip并插入到 Degrees of Lewdity VERSION.html 文件中
+7. 回到当前项目执行如下指令，生成 insertJson.js 注入工具
+
+```shell
+yarn run ts:tool:w
+```
+
+8. 回到当前项目执行如下指令，使用 insertJson.js 将 i18n-cn.json 文件压缩成zip并插入到 Degrees of Lewdity VERSION.html 文件中
 
 ```shell
 node .\dist-tool\insertJson.js "<Degrees of Lewdity VERSION.html 文件路径>" "<i18n-cn.json文件路径>"
