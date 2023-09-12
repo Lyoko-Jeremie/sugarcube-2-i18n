@@ -26,6 +26,9 @@ node build.js -d -u -b 2
 9. play
 
 
+---
+
+i18n-cn.json 文件的格式样本请见当前项目根目录下的 i18n-cn.json 文件
 
 
 

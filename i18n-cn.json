@@ -1,0 +1,62 @@
+{
+  "typeB": {
+    "TypeBOutputText": [
+      {
+        "f": "Welcome to the alpha of Degrees of Lewdity!",
+        "t": "欢迎游玩Degrees of Lewdity！"
+      },
+      {
+        "f": "If you want to avoid trouble, dress modestly and stick to safe, well-lit areas. Nights are particularly dangerous. Dressing lewd will attract attention, both good and bad. ",
+        "t": "倘若你不想被卷入麻烦，那么请牢记要穿着得体，并待在安全、明亮的地方。夜晚是非常危险的，尤其当你身穿色情下流的服饰时，那将引起某些人的注意——而这究竟会给你带来好运还是霉头，谁知道呢？ "
+      },
+      {
+        "f": "You have school tomorrow. ",
+        "t": "你明天要上学。 "
+      },
+      {
+        "f": "CHARACTERISTICS",
+        "t": "角色属性"
+      },
+      {
+        "f": "SOCIAL",
+        "t": "社交"
+      },
+      {
+        "f": "TRAITS",
+        "t": "特征"
+      },
+      {
+        "f": "JOURNAL",
+        "t": "日志"
+      },
+      {
+        "f": "STATS",
+        "t": "统计"
+      },
+      {
+        "f": "FEATS",
+        "t": "成就"
+      },
+      {
+        "f": "OPTIONS",
+        "t": "选项"
+      },
+      {
+        "f": "SAVES",
+        "t": "存档"
+      },
+      {
+        "f": "Next",
+        "t": "继续"
+      },
+      {
+      }
+    ],
+    "TypeBInputStoryScript": [
+      {
+        "f": "The new school year starts tomorrow at <<ampm 9 00>>. The bus service is the easiest way to get around town. Don't forget your uniform!",
+        "t": "新学期将在明日 <<ampm 9 00>> 开始，上学的时候别忘记穿校服！\n巴士是这个小镇里最便捷的交通方式，可以通过巴士站快速移动到想要去的地方。 "
+      }
+    ]
+  }
+}
