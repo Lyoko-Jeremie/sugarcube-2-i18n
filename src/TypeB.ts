@@ -1,3 +1,7 @@
+interface ITypeBDebug {
+    debugMsg?: string;
+}
+
 // original OutputText -> (dontTrim/Trim) -> match `from:string` -> replace use to string
 interface TypeBOutputText extends IMatchBuffer {
     from: string;
@@ -26,7 +30,7 @@ interface TypeBInputStoryScript extends IMatchBufferWithTag {
     dontTrimTag?: boolean;
 }
 
-interface IMatchBuffer {
+interface IMatchBuffer extends ITypeBDebug {
     from: string;
     dontPrepareTrim?: boolean;
     dontTrim?: boolean;
@@ -111,7 +115,16 @@ class TypeB {
             }
         });
         console.log('TypeB constructor', this.outputTextMatchBuffer, this.inputStoryMatchBuffer);
+
+        // monky patch
+        console.log('TypeB constructor monky patch document.createTextNode');
+        this.oCreateTextNode = document.createTextNode;
+        document.createTextNode = (text: string) => {
+            return this.oCreateTextNode.call(document, this.replaceOutputText(text));
+        };
     }
+
+    public oCreateTextNode: typeof document.createTextNode;
 
     public outputTextMatchBuffer: MatchBuffer<TypeBOutputText>;
     public inputStoryMatchBuffer: MatchBuffer<TypeBInputStoryScript>;
@@ -141,13 +154,16 @@ class TypeB {
             // empty string
             return text;
         }
-        console.log('replaceInputStoryScript text', text);
+        // console.log('replaceInputStoryScript text', text);
         let s = text;
         let NNN: TypeBInputStoryScript | undefined;
         NNN = this.inputStoryMatchBuffer.bufTable.notTrim_NotTrimTag.get(s);
         if (NNN) {
             console.log('replaceInputStoryScript notTrim_NotTrimTag', NNN.to);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
+                if (NNN.debugMsg) {
+                    console.log('replaceInputStoryScript debugMsg', NNN.debugMsg);
+                }
                 return NNN.to;
             }
             console.log('replaceInputStoryScript notTrim_NotTrimTag filtered', NNN);
@@ -158,6 +174,9 @@ class TypeB {
         if (NNN) {
             console.log('replaceInputStoryScript notTrim_TrimTag', NNN.to);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
+                if (NNN.debugMsg) {
+                    console.log('replaceInputStoryScript debugMsg', NNN.debugMsg);
+                }
                 return NNN.to;
             }
             console.log('replaceInputStoryScript notTrim_TrimTag filtered', NNN);
@@ -168,6 +187,9 @@ class TypeB {
         if (NNN) {
             console.log('replaceInputStoryScript trim_NotTrimTag', NNN.to);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
+                if (NNN.debugMsg) {
+                    console.log('replaceInputStoryScript debugMsg', NNN.debugMsg);
+                }
                 return NNN.to;
             }
             console.log('replaceInputStoryScript trim_NotTrimTag filtered', NNN);
@@ -178,6 +200,9 @@ class TypeB {
         if (NNN) {
             console.log('replaceInputStoryScript trim_TrimTag', NNN.to);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
+                if (NNN.debugMsg) {
+                    console.log('replaceInputStoryScript debugMsg', NNN.debugMsg);
+                }
                 return NNN.to;
             }
             console.log('replaceInputStoryScript trim_TrimTag filtered', NNN);
@@ -185,6 +210,5 @@ class TypeB {
         }
         return text;
     }
-
 
 }

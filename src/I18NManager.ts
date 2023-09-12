@@ -70,6 +70,11 @@ class I18NManager {
             to: '存档',
         });
 
+        this.cacheTypeBOutputText.push({
+            from: 'Next',
+            to: 'Nextxxxxxxx',
+        });
+
 
         this.cacheTypeBInputStoryScript.push({
             from: "The new school year starts tomorrow at <<ampm 9 00>>. The bus service is the easiest way to get around town. Don't forget your uniform!",
