@@ -34,7 +34,7 @@ interface TypeBInputStoryScript extends IMatchBufferWithTag {
     //      a mark:                `:: Start2 [nosave exitCheckBypass]`
     //      its massage name:         `Start2`
     passageName?: string;
-    normalizeSearchPattern?: RegExp;
+    searchPatternRegex?: RegExp;
 }
 
 interface IMatchBuffer extends ITypeBDebug {
@@ -134,8 +134,8 @@ class PassageMatcher {
         this.passagebuffer = new Map<string, MatchBuffer<TypeBInputStoryScript>>();
         this.noPassageBuffer = [];
         mt.forEach((v) => {
-            if (!v.normalizeSearchPattern) {
-                v.normalizeSearchPattern = normalizeSearchPattern(v.from);
+            if (!v.searchPatternRegex) {
+                v.searchPatternRegex = normalizeSearchPattern(v.from);
             }
             if (v.passageName) {
                 if (!this.passagebuffer.has(v.passageName)) {
@@ -335,16 +335,31 @@ class TypeB {
 
         let MB = this.inputStoryMatchBuffer.getByPassage(passageName);
         if (!MB) {
+            // its not a passage, try match with everywhere
             MB = this.inputStoryMatchBuffer.getMatcherEverywhere();
+            const rt = this.tryMatchInputStoryMatchBuffer(text, MB);
+            if (rt) {
+                // find
+                return rt;
+            }
+            // not find
+            return text;
+        } else {
+            // its a passage, try match with passage, in full string match mode
+            const rt = this.tryMatchInputStoryMatchBuffer(text, MB);
+            if (rt) {
+                // find
+                return rt;
+            }
+            // not find
+            // try match with regex mode in this passage group , again
+            const NF = MB.mt.find((v) => v.searchPatternRegex!.test(text));
+            if (NF) {
+                // find
+                return NF.to;
+            }
+            return text;
         }
-
-        const rt = this.tryMatchInputStoryMatchBuffer(text, MB);
-        if (rt) {
-            // find
-            return rt;
-        }
-        // not find
-        return text;
     }
 
 }
