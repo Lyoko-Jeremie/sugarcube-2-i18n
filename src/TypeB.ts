@@ -223,7 +223,7 @@ class TypeB {
             // empty string
             return text;
         }
-        console.log('replaceInputStoryScript input text [passage:', passageTitle, '] [passage:', passageTitleBackup, '] [passage:', lastPossiblePassageTitle, '] ==>>', [text]/*, text*/);
+        console.log('replaceInputStoryScript input text [passageTitle:', passageTitle, '] [passageTitleBackup:', passageTitleBackup, '] [lastPossiblePassageTitle:', lastPossiblePassageTitle, '] ==>>', [text]/*, text*/);
 
         const MB = this.inputStoryMatchBuffer.getByPassage(passageTitle || passageTitleBackup);
 
