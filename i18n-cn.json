@@ -54,6 +54,7 @@
     ],
     "TypeBInputStoryScript": [
       {
+        "pN": "Start2",
         "f": "The new school year starts tomorrow at <<ampm 9 00>>. The bus service is the easiest way to get around town. Don't forget your uniform!",
         "t": "新学期将在明日 <<ampm 9 00>> 开始，上学的时候别忘记穿校服！\n巴士是这个小镇里最便捷的交通方式，可以通过巴士站快速移动到想要去的地方。 "
       }

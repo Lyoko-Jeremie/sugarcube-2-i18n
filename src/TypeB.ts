@@ -28,6 +28,12 @@ interface TypeBInputStoryScript extends IMatchBufferWithTag {
     // this will happen before replace, it modified `from` string and `original` string
     // this will split matcher to 2 type
     dontTrimTag?: boolean;
+
+    // the passage name, only use in passage match mode
+    // example:
+    //      a mark:                `:: Start2 [nosave exitCheckBypass]`
+    //      its massage name:         `Start2`
+    passageName?: string;
 }
 
 interface IMatchBuffer extends ITypeBDebug {
@@ -53,7 +59,8 @@ enum MatchBufferType {
 class MatchBuffer<T extends IMatchBufferWithTag> {
     constructor(
         public mt: T[],
-        preprocessFunc: (s: T) => [string, MatchBufferType],
+        public preprocessFunc: (s: T) => [string, MatchBufferType],
+        public lazyInit: boolean = false,
     ) {
         this.bufTable = {
             [MatchBufferType.trim]: new Map<string, T>(),
@@ -64,8 +71,14 @@ class MatchBuffer<T extends IMatchBufferWithTag> {
             [MatchBufferType.notTrim_NotTrimTag]: new Map<string, T>(),
             [MatchBufferType.invalid]: new Map<string, T>(),
         };
-        mt.forEach((v) => {
-            const r = preprocessFunc(v);
+        if (!this.lazyInit) {
+            this.init();
+        }
+    }
+
+    init() {
+        this.mt.forEach((v) => {
+            const r = this.preprocessFunc(v);
             if (r[1] !== MatchBufferType.invalid) {
                 this.bufTable[r[1]].set(r[0], v);
             }
@@ -84,6 +97,46 @@ class MatchBuffer<T extends IMatchBufferWithTag> {
     public bufTable: {
         [key in MatchBufferType]: Map<string, T>;
     };
+}
+
+class PassageMatcher {
+    constructor(
+        public mt: TypeBInputStoryScript[],
+        preprocessFunc: (s: TypeBInputStoryScript) => [string, MatchBufferType],
+    ) {
+        this.passagebuffer = new Map<string, MatchBuffer<TypeBInputStoryScript>>();
+        this.noPassageBuffer = [];
+        mt.forEach((v) => {
+            if (v.passageName) {
+                if (!this.passagebuffer.has(v.passageName)) {
+                    this.passagebuffer.set(v.passageName, new MatchBuffer<TypeBInputStoryScript>([], preprocessFunc, true));
+                }
+                let n = this.passagebuffer.get(v.passageName)!;
+                n.mt.push(v);
+            } else {
+                this.noPassageBuffer.push(v);
+            }
+        });
+        this.passagebuffer.forEach((v) => {
+            v.init();
+        })
+        this.noPassageBufferMatcher = new MatchBuffer<TypeBInputStoryScript>(this.noPassageBuffer, preprocessFunc);
+    }
+
+    passagebuffer: Map<string, MatchBuffer<TypeBInputStoryScript>>;
+    noPassageBuffer: TypeBInputStoryScript[];
+    noPassageBufferMatcher: MatchBuffer<TypeBInputStoryScript>;
+
+    getByPassage(passageName: string | '' | undefined | null) {
+        if (passageName) {
+            const pp = this.passagebuffer.get(passageName);
+            if (pp) {
+                return pp;
+            }
+            console.log('cannot find passage:', passageName);
+        }
+        return this.noPassageBufferMatcher;
+    }
 }
 
 class TypeB {
@@ -105,7 +158,7 @@ class TypeB {
             // [[offten use]]
             return [MatchBuffer.trim(t.from), tt];
         });
-        this.inputStoryMatchBuffer = new MatchBuffer<TypeBInputStoryScript>(InputStoryScript, (t) => {
+        this.inputStoryMatchBuffer = new PassageMatcher(InputStoryScript, (t) => {
             // console.log('TypeB constructor inputStoryMatchBuffer', t);
             if (typeof t.from !== 'string' || typeof t.to !== 'string') {
                 console.log('TypeB constructor inputStoryMatchBuffer invalid', t);
@@ -143,7 +196,7 @@ class TypeB {
     public oCreateTextNode: typeof document.createTextNode;
 
     public outputTextMatchBuffer: MatchBuffer<TypeBOutputText>;
-    public inputStoryMatchBuffer: MatchBuffer<TypeBInputStoryScript>;
+    public inputStoryMatchBuffer: PassageMatcher;
 
     replaceOutputText(text: string): string {
         if (!text.trim()) {
@@ -165,15 +218,18 @@ class TypeB {
         return text;
     }
 
-    replaceInputStoryScript(text: string): string {
+    replaceInputStoryScript(text: string, passage: string): string {
         if (!text.trim()) {
             // empty string
             return text;
         }
-        console.log('replaceInputStoryScript input text ==>>', [text], text);
+        console.log('replaceInputStoryScript input text [passage:', passage, '] ==>>', [text], text);
+
+        const MB = this.inputStoryMatchBuffer.getByPassage(passage);
+
         let s = text;
         let NNN: TypeBInputStoryScript | undefined;
-        NNN = this.inputStoryMatchBuffer.bufTable.notTrim_NotTrimTag.get(s);
+        NNN = MB.bufTable.notTrim_NotTrimTag.get(s);
         if (NNN) {
             // console.log('replaceInputStoryScript notTrim_NotTrimTag', [NNN.to]);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
@@ -187,7 +243,7 @@ class TypeB {
             // be filtered, fall through, to match next
         }
         s = MatchBuffer.trimTag(s);
-        NNN = this.inputStoryMatchBuffer.bufTable.notTrim_TrimTag.get(s);
+        NNN = MB.bufTable.notTrim_TrimTag.get(s);
         if (NNN) {
             // console.log('replaceInputStoryScript notTrim_TrimTag', [NNN.to]);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
@@ -201,7 +257,7 @@ class TypeB {
             // be filtered, fall through, to match next
         }
         s = MatchBuffer.trim(text);
-        NNN = this.inputStoryMatchBuffer.bufTable.trim_NotTrimTag.get(s);
+        NNN = MB.bufTable.trim_NotTrimTag.get(s);
         if (NNN) {
             // console.log('replaceInputStoryScript trim_NotTrimTag', [NNN.to]);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
@@ -215,7 +271,7 @@ class TypeB {
             // be filtered, fall through, to match next
         }
         s = MatchBuffer.trimTag(s);
-        NNN = this.inputStoryMatchBuffer.bufTable.trim_TrimTag.get(s);
+        NNN = MB.bufTable.trim_TrimTag.get(s);
         if (NNN) {
             // console.log('replaceInputStoryScript trim_TrimTag', [NNN.to]);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
