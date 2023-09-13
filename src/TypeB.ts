@@ -203,29 +203,29 @@ class TypeB {
             // empty string
             return text;
         }
-        console.log('replaceOutputText input text ==>>', [text], text);
+        // console.log('replaceOutputText input text ==>>', [text], text);
         const nNotTrim = this.outputTextMatchBuffer.bufTable.notTrim.get(text);
         if (nNotTrim) {
-            console.log('replaceOutputText notTrim ==>>', [text], ' replace to ==>>', nNotTrim.to, ' by ', nNotTrim, ' on key ', [text]);
+            // console.log('replaceOutputText notTrim ==>>', [text], ' replace to ==>>', nNotTrim.to, ' by ', nNotTrim, ' on key ', [text]);
             return nNotTrim.to;
         }
         const nTrim = this.outputTextMatchBuffer.bufTable.trim.get(MatchBuffer.trim(text));
         if (nTrim) {
-            console.log('replaceOutputText nTrim ==>>', [text], ' replace to ==>>', nTrim.to, ' by ', nTrim, ' on key ', [MatchBuffer.trim(text)]);
+            // console.log('replaceOutputText nTrim ==>>', [text], ' replace to ==>>', nTrim.to, ' by ', nTrim, ' on key ', [MatchBuffer.trim(text)]);
             return nTrim.to;
         }
-        console.log('replaceOutputText cannot find replace for input text ==>>', [text]);
+        // console.log('replaceOutputText cannot find replace for input text ==>>', [text]);
         return text;
     }
 
-    replaceInputStoryScript(text: string, passage: string): string {
+    replaceInputStoryScript(text: string, passageTitle?: string, passageTitleBackup?: string, lastPossiblePassageTitle?: string): string {
         if (!text.trim()) {
             // empty string
             return text;
         }
-        console.log('replaceInputStoryScript input text [passage:', passage, '] ==>>', [text], text);
+        console.log('replaceInputStoryScript input text [passage:', passageTitle, '] [passage:', passageTitleBackup, '] [passage:', lastPossiblePassageTitle, '] ==>>', [text]/*, text*/);
 
-        const MB = this.inputStoryMatchBuffer.getByPassage(passage);
+        const MB = this.inputStoryMatchBuffer.getByPassage(passageTitle || passageTitleBackup);
 
         let s = text;
         let NNN: TypeBInputStoryScript | undefined;
@@ -236,7 +236,7 @@ class TypeB {
                 if (NNN.debugMsg) {
                     console.log('replaceInputStoryScript debugMsg ==>>', NNN.debugMsg);
                 }
-                console.log('replaceInputStoryScript notTrim_NotTrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
+                // console.log('replaceInputStoryScript notTrim_NotTrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
                 return NNN.to;
             }
             console.log('replaceInputStoryScript notTrim_NotTrimTag filtered', NNN);
@@ -250,7 +250,7 @@ class TypeB {
                 if (NNN.debugMsg) {
                     console.log('replaceInputStoryScript debugMsg ==>>', NNN.debugMsg);
                 }
-                console.log('replaceInputStoryScript notTrim_TrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
+                // console.log('replaceInputStoryScript notTrim_TrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
                 return NNN.to;
             }
             console.log('replaceInputStoryScript notTrim_TrimTag filtered', NNN);
@@ -264,7 +264,7 @@ class TypeB {
                 if (NNN.debugMsg) {
                     console.log('replaceInputStoryScript debugMsg ==>>', NNN.debugMsg);
                 }
-                console.log('replaceInputStoryScript trim_NotTrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
+                // console.log('replaceInputStoryScript trim_NotTrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
                 return NNN.to;
             }
             console.log('replaceInputStoryScript trim_NotTrimTag filtered', NNN);
@@ -278,13 +278,13 @@ class TypeB {
                 if (NNN.debugMsg) {
                     console.log('replaceInputStoryScript debugMsg ==>>', NNN.debugMsg);
                 }
-                console.log('replaceInputStoryScript trim_TrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
+                // console.log('replaceInputStoryScript trim_TrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
                 return NNN.to;
             }
             console.log('replaceInputStoryScript trim_TrimTag filtered', NNN);
             // be filtered, fall through, to match next
         }
-        console.log('replaceInputStoryScript cannot find replace for input text ==>>', [text]);
+        // console.log('replaceInputStoryScript cannot find replace for input text ==>>', [text]);
         return text;
     }
 
