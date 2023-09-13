@@ -163,11 +163,12 @@ class I18NManager {
                     to: T.t,
                 });
             });
-            this.cacheTypeBInputStoryScript = T.typeB.TypeBInputStoryScript.map((T: any) => {
+            this.cacheTypeBInputStoryScript = T.typeB.TypeBInputStoryScript.map((T: any): TypeBInputStoryScript => {
                 return Object.assign(T, {
                     from: T.f,
                     to: T.t,
-                });
+                    passageName: T.pN,
+                } as TypeBInputStoryScript);
             });
 
             // DEBUG test only
