@@ -74,8 +74,8 @@ function normalizeSearchPattern(pattern: string): RegExp {
         .replace(/\s*(?<!<)<(?![<=])\s*/g, '\\s*<\\s*')
         .replace(/\s*(?<!>)>(?![>=])\s*/g, '\\s*>\\s*')
         // ( and )
-        .replace(/\s*\(\s*/g, '\\s*\(\\s*')
-        .replace(/\s*\)\s*/g, '\\s*\)\\s*')
+        .replace(/\s*(\\\()\s*/g, '\\s*\\(\\s*')
+        .replace(/\s*(\\\))\s*/g, '\\s*\\)\\s*')
     ;
 
     // console.log('normalizedPattern:', [normalizedPattern]);
