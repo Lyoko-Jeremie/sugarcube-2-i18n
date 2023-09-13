@@ -135,6 +135,10 @@ class PassageMatcher {
             }
             console.log('cannot find passage:', passageName);
         }
+        return undefined;
+    }
+
+    getMatcherEverywhere() {
         return this.noPassageBufferMatcher;
     }
 }
@@ -218,73 +222,98 @@ class TypeB {
         return text;
     }
 
-    replaceInputStoryScript(text: string, passageTitle?: string, passageTitleBackup?: string, lastPossiblePassageTitle?: string): string {
-        if (!text.trim()) {
-            // empty string
-            return text;
-        }
-        console.log('replaceInputStoryScript input text [passageTitle:', passageTitle, '] [passageTitleBackup:', passageTitleBackup, '] [lastPossiblePassageTitle:', lastPossiblePassageTitle, '] ==>>', [text]/*, text*/);
-
-        const MB = this.inputStoryMatchBuffer.getByPassage(passageTitle || passageTitleBackup);
-
+    tryMatchInputStoryMatchBuffer(text: string, MB: MatchBuffer<TypeBInputStoryScript>) {
         let s = text;
         let NNN: TypeBInputStoryScript | undefined;
         NNN = MB.bufTable.notTrim_NotTrimTag.get(s);
         if (NNN) {
-            // console.log('replaceInputStoryScript notTrim_NotTrimTag', [NNN.to]);
+            // console.log('tryMatchInputStoryMatchBuffer notTrim_NotTrimTag', [NNN.to]);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
                 if (NNN.debugMsg) {
-                    console.log('replaceInputStoryScript debugMsg ==>>', NNN.debugMsg);
+                    console.log('tryMatchInputStoryMatchBuffer debugMsg ==>>', NNN.debugMsg);
                 }
-                // console.log('replaceInputStoryScript notTrim_NotTrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
+                // console.log('tryMatchInputStoryMatchBuffer notTrim_NotTrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
                 return NNN.to;
             }
-            console.log('replaceInputStoryScript notTrim_NotTrimTag filtered', NNN);
+            console.log('tryMatchInputStoryMatchBuffer notTrim_NotTrimTag filtered', NNN);
             // be filtered, fall through, to match next
         }
         s = MatchBuffer.trimTag(s);
         NNN = MB.bufTable.notTrim_TrimTag.get(s);
         if (NNN) {
-            // console.log('replaceInputStoryScript notTrim_TrimTag', [NNN.to]);
+            // console.log('tryMatchInputStoryMatchBuffer notTrim_TrimTag', [NNN.to]);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
                 if (NNN.debugMsg) {
-                    console.log('replaceInputStoryScript debugMsg ==>>', NNN.debugMsg);
+                    console.log('tryMatchInputStoryMatchBuffer debugMsg ==>>', NNN.debugMsg);
                 }
-                // console.log('replaceInputStoryScript notTrim_TrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
+                // console.log('tryMatchInputStoryMatchBuffer notTrim_TrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
                 return NNN.to;
             }
-            console.log('replaceInputStoryScript notTrim_TrimTag filtered', NNN);
+            console.log('tryMatchInputStoryMatchBuffer notTrim_TrimTag filtered', NNN);
             // be filtered, fall through, to match next
         }
         s = MatchBuffer.trim(text);
         NNN = MB.bufTable.trim_NotTrimTag.get(s);
         if (NNN) {
-            // console.log('replaceInputStoryScript trim_NotTrimTag', [NNN.to]);
+            // console.log('tryMatchInputStoryMatchBuffer trim_NotTrimTag', [NNN.to]);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
                 if (NNN.debugMsg) {
-                    console.log('replaceInputStoryScript debugMsg ==>>', NNN.debugMsg);
+                    console.log('tryMatchInputStoryMatchBuffer debugMsg ==>>', NNN.debugMsg);
                 }
-                // console.log('replaceInputStoryScript trim_NotTrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
+                // console.log('tryMatchInputStoryMatchBuffer trim_NotTrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
                 return NNN.to;
             }
-            console.log('replaceInputStoryScript trim_NotTrimTag filtered', NNN);
+            console.log('tryMatchInputStoryMatchBuffer trim_NotTrimTag filtered', NNN);
             // be filtered, fall through, to match next
         }
         s = MatchBuffer.trimTag(s);
         NNN = MB.bufTable.trim_TrimTag.get(s);
         if (NNN) {
-            // console.log('replaceInputStoryScript trim_TrimTag', [NNN.to]);
+            // console.log('tryMatchInputStoryMatchBuffer trim_TrimTag', [NNN.to]);
             if (!(NNN.notMatchRegex && s.match(NNN.notMatchRegex))) {
                 if (NNN.debugMsg) {
-                    console.log('replaceInputStoryScript debugMsg ==>>', NNN.debugMsg);
+                    console.log('tryMatchInputStoryMatchBuffer debugMsg ==>>', NNN.debugMsg);
                 }
-                // console.log('replaceInputStoryScript trim_TrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
+                // console.log('tryMatchInputStoryMatchBuffer trim_TrimTag ==>>', [text], ' replace to ==>>', [NNN.to], ' by ', NNN, ' on key ', [s]);
                 return NNN.to;
             }
-            console.log('replaceInputStoryScript trim_TrimTag filtered', NNN);
+            console.log('tryMatchInputStoryMatchBuffer trim_TrimTag filtered', NNN);
             // be filtered, fall through, to match next
         }
         // console.log('replaceInputStoryScript cannot find replace for input text ==>>', [text]);
+        return undefined;
+    }
+
+    replaceInputStoryScript(text: string, passageTitle?: string, passageTitleBackup?: string, lastPossiblePassageTitle?: string): string {
+        if (!text.trim()) {
+            // empty string
+            return text;
+        }
+        console.log(
+            'replaceInputStoryScript input text [passageTitle:',
+            passageTitle || undefined,
+            '] [passageTitleBackup:',
+            passageTitleBackup || undefined,
+            '] [lastPossiblePassageTitle:',
+            lastPossiblePassageTitle || undefined,
+            '] ==>>',
+            [text],
+            // text
+        );
+
+        const passageName = passageTitle || passageTitleBackup || lastPossiblePassageTitle;
+
+        let MB = this.inputStoryMatchBuffer.getByPassage(passageName);
+        if (!MB) {
+            MB = this.inputStoryMatchBuffer.getMatcherEverywhere();
+        }
+
+        const rt = this.tryMatchInputStoryMatchBuffer(text, MB);
+        if (rt) {
+            // find
+            return rt;
+        }
+        // not find
         return text;
     }
 
