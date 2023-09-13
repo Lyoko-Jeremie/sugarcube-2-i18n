@@ -34,6 +34,7 @@ interface TypeBInputStoryScript extends IMatchBufferWithTag {
     //      a mark:                `:: Start2 [nosave exitCheckBypass]`
     //      its massage name:         `Start2`
     passageName?: string;
+    normalizeSearchPattern?: RegExp;
 }
 
 interface IMatchBuffer extends ITypeBDebug {
@@ -55,6 +56,32 @@ enum MatchBufferType {
     'notTrim_NotTrimTag' = 'notTrim_NotTrimTag',
     'invalid' = 'invalid',
 };
+
+// come from GPT-4
+function normalizeSearchPattern(pattern: string): RegExp {
+    // 转义正则表达式中的特殊字符
+    const escapedPattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    // 在非空白字符之间插入对空白字符的匹配
+    const normalizedPattern = escapedPattern
+        .split('')
+        .map(char => /\s/.test(char) ? `\\s*` : char)
+        .join('')
+        // add whitespace match between << and >>
+        .replace(/\s*<<\s*/g, '\\s*<<\\s*')
+        .replace(/\s*>>\s*/g, '\\s*>>\\s*')
+        // add whitespace match between < and > but not effect << , >> , <= , >=
+        .replace(/\s*(?<!<)<(?![<=])\s*/g, '\\s*<\\s*')
+        .replace(/\s*(?<!>)>(?![>=])\s*/g, '\\s*>\\s*')
+        // ( and )
+        .replace(/\s*\(\s*/g, '\\s*\(\\s*')
+        .replace(/\s*\)\s*/g, '\\s*\)\\s*')
+    ;
+
+    // console.log('normalizedPattern:', [normalizedPattern]);
+
+    return new RegExp(normalizedPattern, 'g');
+}
 
 class MatchBuffer<T extends IMatchBufferWithTag> {
     constructor(
@@ -107,6 +134,9 @@ class PassageMatcher {
         this.passagebuffer = new Map<string, MatchBuffer<TypeBInputStoryScript>>();
         this.noPassageBuffer = [];
         mt.forEach((v) => {
+            if (!v.normalizeSearchPattern) {
+                v.normalizeSearchPattern = normalizeSearchPattern(v.from);
+            }
             if (v.passageName) {
                 if (!this.passagebuffer.has(v.passageName)) {
                     this.passagebuffer.set(v.passageName, new MatchBuffer<TypeBInputStoryScript>([], preprocessFunc, true));
