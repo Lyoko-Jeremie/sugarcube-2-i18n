@@ -1,7 +1,7 @@
 {
-  "name": "TypescriptWebpackTemplateProject",
+  "name": "SC2-i18n-framework",
   "version": "1.0.0",
-  "description": "TypescriptWebpackTemplateProject",
+  "description": "SugarCube2 i18n framework",
   "private": true,
   "scripts": {
     "ts:w": "tsc -w -p ./src/tsconfig.json",
