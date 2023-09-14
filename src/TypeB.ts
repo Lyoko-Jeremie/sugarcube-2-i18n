@@ -319,17 +319,17 @@ class TypeB {
             // empty string
             return text;
         }
-        console.log(
-            'replaceInputStoryScript input text [passageTitle:',
-            passageTitle || undefined,
-            '] [passageTitleBackup:',
-            passageTitleBackup || undefined,
-            '] [lastPossiblePassageTitle:',
-            lastPossiblePassageTitle || undefined,
-            '] ==>>',
-            [text],
-            // text
-        );
+        // console.log(
+        //     'replaceInputStoryScript input text [passageTitle:',
+        //     passageTitle || undefined,
+        //     '] [passageTitleBackup:',
+        //     passageTitleBackup || undefined,
+        //     '] [lastPossiblePassageTitle:',
+        //     lastPossiblePassageTitle || undefined,
+        //     '] ==>>',
+        //     [text],
+        //     // text
+        // );
 
         const passageName = passageTitle || passageTitleBackup || lastPossiblePassageTitle;
 
@@ -351,23 +351,62 @@ class TypeB {
             // not find
             return text;
         } else {
-            // its a passage, try match with passage, in full string match mode
-            const rt = this.tryMatchInputStoryMatchBuffer(text, MB);
-            if (rt) {
-                // find
-                return rt;
-            }
-            // not find
-            // console.log('try match with regex mode in this passage group [ ', passageName, ' ] ');
-            // try match with regex mode in this passage group , again
-            const NS = MB.mt.reduce((acc, v) => {
-                if (v.searchPatternRegex?.test(text)) {
-                    // find
-                    return acc.replace(v.searchPatternRegex, v.to);
+            // // its a passage, try match with passage, in full string match mode
+            // const rt = this.tryMatchInputStoryMatchBuffer(text, MB);
+            // if (rt) {
+            //     // find
+            //     return rt;
+            // }
+            // return text;
+
+            try {
+
+                // its a passage try match every
+                let newS = text;
+                for (const v of MB.mt) {
+                    newS = newS.replace(v.from, v.to);
                 }
-                return acc;
-            }, text);
-            return NS;
+                return newS;
+                // const NS = MB.mt.reduce((acc, v) => {
+                //     return acc.replace(v.from, v.to);
+                // }, text);
+
+                // // not find
+                // // console.log('try match with regex mode in this passage group [ ', passageName, ' ] ');
+                // // try match with regex mode in this passage group , again
+                // const NS = MB.mt.reduce((acc, v) => {
+                //     if (v.searchPatternRegex?.test(text)) {
+                //         // find
+                //         return acc.replace(v.searchPatternRegex, v.to);
+                //     }
+                //     return acc;
+                // }, text);
+                // return NS;
+
+                // let newS = text;
+                // for (const v of MB.mt) {
+                //     if (v.searchPatternRegex) {
+                //         let re = new RegExp(v.searchPatternRegex, 'g');
+                //         let match;
+                //         while (match = re.exec(newS)) {
+                //             newS = newS.replace(match[0], v.to);
+                //         }
+                //     }
+                // }
+                // return newS;
+
+                // for (const v of MB.mt) {
+                //     if (v.searchPatternRegex?.test(text)) {
+                //         // find
+                //         newS = newS.replace(v.searchPatternRegex, v.to);
+                //     }
+                // }
+                // return newS;
+
+            } catch (e) {
+                // we ignore the "InternalError: allocation size overflow" error on there
+                console.error('replaceInputStoryScript() seems like a "InternalError: allocation size overflow" error happaned? :', e);
+            }
         }
     }
 
