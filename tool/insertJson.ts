@@ -61,7 +61,7 @@ function checkAndProcessData(T: any) {
     await promisify(fs.writeFile)(htmlPath + '.zipBase64.zip', await zip.generateAsync({
         type: "uint8array",
         compression: "DEFLATE",
-        compressionOptions: {level: 9},
+        compressionOptions: {level: 6},
     }), {encoding: 'utf-8'});
     await promisify(fs.writeFile)(htmlPath + '.zipBase64', zipBase64, {encoding: 'utf-8'});
 
