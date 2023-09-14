@@ -174,9 +174,9 @@ class I18NManager {
                 } as TypeBInputStoryScript);
             });
 
-            // DEBUG test only
-            this.cacheTypeBInputStoryScript = this.cacheTypeBInputStoryScript.concat(this.cacheTypeBOutputText);
-            this.cacheTypeBOutputText = this.cacheTypeBInputStoryScript;
+            // // DEBUG test only
+            // this.cacheTypeBInputStoryScript = this.cacheTypeBInputStoryScript.concat(this.cacheTypeBOutputText);
+            // this.cacheTypeBOutputText = this.cacheTypeBInputStoryScript;
 
             return true;
         }
