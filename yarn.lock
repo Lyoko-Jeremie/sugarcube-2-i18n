@@ -19,9 +19,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"TypescriptWebpackTemplateProject@workspace:.":
+"SC2-i18n-framework@workspace:.":
   version: 0.0.0-use.local
-  resolution: "TypescriptWebpackTemplateProject@workspace:."
+  resolution: "SC2-i18n-framework@workspace:."
   dependencies:
     "@types/lodash": ^4.14.198
     "@types/node": ^20.6.0

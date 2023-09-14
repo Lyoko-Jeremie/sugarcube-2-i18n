@@ -123,6 +123,9 @@ class I18NManager {
                             return this.loadTranslateDataFromValueObject() || R;
                         case TranslateDataLoadType.ValueZip:
                             return this.loadTranslateDataFromValueZip() || R;
+                        default:
+                            console.error('I18NManager loadTranslateData() unknown loadType:', [loadType]);
+                            return R;
                     }
                 });
             },

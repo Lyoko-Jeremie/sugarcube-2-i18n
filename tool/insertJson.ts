@@ -56,7 +56,7 @@ function checkAndProcessData(T: any) {
         '\n' + insertContent2 +
         '\n' + htmlF.slice(firstScriptIndex);
 
-    await promisify(fs.writeFile)(htmlPath + '.new.html', newHtmlF, {encoding: 'utf-8'});
+    await promisify(fs.writeFile)(htmlPath + '.i18n.html', newHtmlF, {encoding: 'utf-8'});
 
     await promisify(fs.writeFile)(htmlPath + '.zipBase64.zip', await zip.generateAsync({
         type: "uint8array",
