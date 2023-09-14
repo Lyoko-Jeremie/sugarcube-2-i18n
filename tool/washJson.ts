@@ -55,12 +55,28 @@ interface RRRRR {
     };
     typeB.TypeBInputStoryScript?.forEach(T => {
         const f = T.from || T.f;
-        if (f) {
-            if (/[<>;:!\[\]\{\}=,"]|(?:\$_)|(?:T\.)|(?:V\.)|(?:return)|(?: _\w)|(?:\$\w)/.test(f)) {
+        const t = T.to || T.t;
+        if (f && t) {
+            if (/[<>;:!\[\]\{\}=,"]|(?:__)|(?:\$_)|(?:T\.)|(?:V\.)|(?:return)|(?: _\w)|(?:\$\w)/.test(f)) {
                 rr.TypeBInputStoryScript.push(T);
+                return;
             } else {
+                if (T.passageName) {
+                    if (f.length > 20) {
+                        rr.TypeBInputStoryScript.push(T);
+                        return;
+                    } else {
+                        if (t.length > 10) {
+                            rr.TypeBInputStoryScript.push(T);
+                            return;
+                        }
+                    }
+                }
                 rr.TypeBOutputText.push(T);
+                return;
             }
+        } else {
+            // ignore
         }
     });
     typeB.TypeBOutputText?.forEach(T => {
