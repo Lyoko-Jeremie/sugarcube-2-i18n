@@ -352,11 +352,12 @@ class TypeB {
                 return rt;
             }
             // not find
+            console.log('try match with regex mode in this passage group [ ', passageName, ' ] ');
             // try match with regex mode in this passage group , again
-            const NF = MB.mt.find((v) => v.searchPatternRegex!.test(text));
+            const NF = MB.mt.find((v) => v.searchPatternRegex?.test(text));
             if (NF) {
                 // find
-                return NF.to;
+                return text.replace(NF.searchPatternRegex!, NF.to);
             }
             return text;
         }
