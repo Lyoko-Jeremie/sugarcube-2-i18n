@@ -43,9 +43,9 @@ Degrees of Lewdity VERSION.html.zipBase64.zip
 // Base64编码后的zip文件，可用来检查编码是否有误，可直接删除
 Degrees of Lewdity VERSION.html.zipBase64
 // 嵌入了i18n-cn.json的Base64编码后的zip文件后的html文件，直接以原始项目的html同样的方式打开即可使用
-Degrees of Lewdity VERSION.html.new.html
+Degrees of Lewdity VERSION.html.i18n.html
 ```
-9. 打开`Degrees of Lewdity VERSION.html.new.html`文件， play
+9. 打开`Degrees of Lewdity VERSION.html.i18n.html`文件， play
 
 ---
 
