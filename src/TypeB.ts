@@ -249,6 +249,16 @@ class TypeB {
             return nTrim.to;
         }
         // console.log('replaceOutputText cannot find replace for input text ==>>', [text]);
+        // try {
+        //     let newS = text;
+        //     for (const v of this.outputTextMatchBuffer.mt) {
+        //         newS = newS.replace(v.from, v.to);
+        //     }
+        //     return newS;
+        // } catch (e) {
+        //     // we ignore the "InternalError: allocation size overflow" error on there
+        //     console.error('replaceOutputText() seems like a "InternalError: allocation size overflow" error happaned? :', e);
+        // }
         return text;
     }
 
@@ -395,6 +405,7 @@ class TypeB {
                 // }
                 // return newS;
 
+                // let newS = text;
                 // for (const v of MB.mt) {
                 //     if (v.searchPatternRegex?.test(text)) {
                 //         // find
