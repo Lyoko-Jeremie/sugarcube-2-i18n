@@ -408,6 +408,7 @@ class TypeB {
                 console.error('replaceInputStoryScript() seems like a "InternalError: allocation size overflow" error happaned? :', e);
             }
         }
+        return text;
     }
 
 }
