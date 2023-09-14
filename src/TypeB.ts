@@ -360,12 +360,14 @@ class TypeB {
             // not find
             // console.log('try match with regex mode in this passage group [ ', passageName, ' ] ');
             // try match with regex mode in this passage group , again
-            const NF = MB.mt.find((v) => v.searchPatternRegex?.test(text));
-            if (NF) {
-                // find
-                return text.replace(NF.searchPatternRegex!, NF.to);
-            }
-            return text;
+            const NS = MB.mt.reduce((acc, v) => {
+                if (v.searchPatternRegex?.test(text)) {
+                    // find
+                    return acc.replace(v.searchPatternRegex, v.to);
+                }
+                return acc;
+            }, text);
+            return NS;
         }
     }
 
