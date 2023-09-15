@@ -27,6 +27,7 @@ interface TTTT {
     //      a mark:                `:: Start2 [nosave exitCheckBypass]`
     //      its massage name:         `Start2`
     passageName?: string;
+    pN?: string;
 }
 
 interface RRRRR {
@@ -46,51 +47,75 @@ interface RRRRR {
     const jsonF = await promisify(fs.readFile)(jsonPath, {encoding: 'utf-8'});
     const data: any = JSON.parse(jsonF);
     console.log(jsonF.length);
-    console.log(Object.keys(data));
-    const typeB: RRRRR = data.typeB;
+    // console.log(Object.keys(data));
 
     const rr: RRRRR = {
         TypeBOutputText: [],
         TypeBInputStoryScript: [],
     };
-    typeB.TypeBInputStoryScript?.forEach(T => {
-        const f = T.from || T.f;
-        const t = T.to || T.t;
-        if (f && t) {
-            if (/[<>;:!\[\]\{\}=,"]|(?:__)|(?:\$_)|(?:T\.)|(?:V\.)|(?:return)|(?: _\w)|(?:\$\w)/.test(f)) {
-                rr.TypeBInputStoryScript.push(T);
-                return;
-            } else {
-                if (T.passageName) {
-                    if (f.length > 20) {
-                        rr.TypeBInputStoryScript.push(T);
-                        return;
-                    } else {
-                        if (t.length > 10) {
-                            rr.TypeBInputStoryScript.push(T);
-                            return;
-                        }
-                    }
+
+    if (true) {
+        const tList: TTTT[] = data;
+        tList.forEach(T => {
+            const f = T.from || T.f;
+            const t = T.to || T.t;
+            const passageName = T.passageName || T.pN;
+            if (f && t) {
+                if (passageName) {
+                    rr.TypeBInputStoryScript.push(T);
+                    return;
                 }
                 rr.TypeBOutputText.push(T);
                 return;
-            }
-        } else {
-            // ignore
-        }
-    });
-    typeB.TypeBOutputText?.forEach(T => {
-        const f = T.from || T.f;
-        if (f) {
-            if (/[<>]|(?:\$_)/.test(f)) {
-                rr.TypeBInputStoryScript.push(T);
             } else {
-                rr.TypeBOutputText.push(T);
+                // ignore
             }
-        }
-    });
+        });
+    }
+
+    if (false) {
+        const typeB: RRRRR = data.typeB;
+        typeB.TypeBInputStoryScript?.forEach(T => {
+            const f = T.from || T.f;
+            const t = T.to || T.t;
+            if (f && t) {
+                if (/[<>;:!\[\]\{\}=,"]|(?:__)|(?:\$_)|(?:T\.)|(?:V\.)|(?:return)|(?: _\w)|(?:\$\w)/.test(f)) {
+                    rr.TypeBInputStoryScript.push(T);
+                    return;
+                } else {
+                    if (T.passageName) {
+                        if (f.length > 20) {
+                            rr.TypeBInputStoryScript.push(T);
+                            return;
+                        } else {
+                            if (t.length > 10) {
+                                rr.TypeBInputStoryScript.push(T);
+                                return;
+                            }
+                        }
+                    }
+                    rr.TypeBOutputText.push(T);
+                    return;
+                }
+            } else {
+                // ignore
+            }
+        });
+        typeB.TypeBOutputText?.forEach(T => {
+            const f = T.from || T.f;
+            if (f) {
+                if (/[<>]|(?:\$_)/.test(f)) {
+                    rr.TypeBInputStoryScript.push(T);
+                } else {
+                    rr.TypeBOutputText.push(T);
+                }
+            }
+        });
+    }
 
 
+    console.log('TypeBInputStoryScript', Array.from(rr.TypeBInputStoryScript).slice(0, 2));
+    console.log('TypeBOutputText', Array.from(rr.TypeBOutputText).slice(0, 2));
     console.log('TypeBInputStoryScript', rr.TypeBInputStoryScript.length);
     console.log('TypeBOutputText', rr.TypeBOutputText.length);
     const objString = JSON.stringify({typeB: rr}, undefined, ' ');
