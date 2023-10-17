@@ -35,6 +35,9 @@ interface TypeBInputStoryScript extends IMatchBufferWithTag {
     //      its massage name:         `Start2`
     passageName?: string;
     searchPatternRegex?: RegExp;
+
+    // pos in passage
+    pos: number;
 }
 
 interface IMatchBuffer extends ITypeBDebug {
